@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState} from 'react';
 import Room from './components/Room';
 import Editor from './components/Editor';
 import Loginform from './components/Loginform';
 import Uploadform from './components/Uploadform';
-
-
+import {StepContext} from './context.js'
 const App = () => {
     const check = async () => {
         console.log('checking')
@@ -67,12 +66,14 @@ const App = () => {
     };
 
     return (
+        <StepContext.Provider value={{currentStep, setCurrentStep}}>
         <div>
             {currentStep === "login" && <Loginform onLogin={handleLogin} />}
             {currentStep === "roomSelector" && <Room onRoomSelect={handleRoomSelect} />}
             {currentStep === "documentUploader" && <Uploadform onUploadComplete={handleUploadComplete} />}
             {currentStep === "editor" && <Editor roomId={roomId} content={documentContent} />}
         </div>
+        </StepContext.Provider>
     );
 
 };

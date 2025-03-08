@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
 import "quill/dist/quill.snow.css";
 import Quill from 'quill';
 import QuillCursors from 'quill-cursors';
 Quill.register("modules/cursors", QuillCursors);
 import { io } from "socket.io-client";
 import Loader from "./Loader";
+import { StepContext } from "../context.js";
 const Editor = ({ roomId, content }) => {
   const socket = useRef(null);
   const quillRef = useRef(null);
@@ -25,7 +26,7 @@ const Editor = ({ roomId, content }) => {
       quillRef.current = new Quill(editorContainer, {
         theme: "snow",
         modules: {
-          toolbar: [],
+          toolbar: false,
           cursors: true,
         },
       });
@@ -113,9 +114,13 @@ const Editor = ({ roomId, content }) => {
       setStatus("processing");
     }
   }
+  const stepContext = useContext(StepContext);
+  const leaveRoom = ()=>{
+    stepContext.setCurrentStep('roomSelector')
+  }
 
   return <>
-    <div id="editor" style={{ height: "500px" }} />
+    <div id="editor" />
     <div className="popup-card form-box" style={{display:"none"}} ref={cardRef}>
       <button type="button" className="close-btn" onClick={handleClose}><img src="src\assets\close.svg" alt="close" /></button>
       <h3>Share Room Id to Your Team</h3>
@@ -130,6 +135,7 @@ const Editor = ({ roomId, content }) => {
         <div>{status}</div>
       </div>
     </div>
+    <button type="button" className="leave-btn" onClick={leaveRoom}>Leave</button>
     <button type="button" className="show-card"
       onClick={() => { cardRef.current.style.display = 'flex'; }}
       title="Collab">
